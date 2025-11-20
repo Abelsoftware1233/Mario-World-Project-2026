@@ -16,9 +16,8 @@ function Preloader() {
     view.appendToBody(loadingPercentage);
 
     imageSources = {
-      0: 'images/back-btn.png',
-      1: 'images/bg.png',
-      2: 'images/bowser.png',
+      1: 'images/back-btn.png',
+      2: 'images/bg.png',
       3: 'images/bullet.png',
       4: 'images/clear-map-btn.png',
       5: 'images/coin.png',
@@ -41,8 +40,9 @@ function Preloader() {
       22: 'images/saved-btn.png',
       23: 'images/slider-left.png',
       24: 'images/slider-right.png',
-      25: 'images/start-btn.png'
-    };
+      25: 'images/start-btn.png',
+      26: 'images/bowser'
+   };
 
     that.loadImages(imageSources);
   };
