@@ -158,11 +158,6 @@
   height: 31px;
   background: url('../images/enemies.png') 0 0;
 }
-.bowser {
-  width: 40px;
-  height: 34px;
-  background: url('../images/bowser.png') 0 0;
-}
 
 .right-arrow {
   width: 60px;
@@ -357,4 +352,12 @@
 
 .fb-comments {
   margin: 0 auto;
+}
+body {
+  /* Ga één map omhoog (..) vanuit de 'css' map 
+     en pak het bestand '1000009748.jpg' dat daar staat. */
+  background-image: url('../1000009748.jpg');
+  background-size: cover; /* Optioneel: zorgt dat de afbeelding het hele scherm vult */
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Optioneel: zorgt dat de achtergrond vast blijft staan bij scrollen */
 }
