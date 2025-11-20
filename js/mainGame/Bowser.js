@@ -17,8 +17,8 @@ function Bowser() {
 
   this.sX;
   this.sY = 0;
-  this.width = 40;
-  this.height = 34;
+  this.width = 32;
+  this.height = 32;
 
   this.frame = 0;
 
