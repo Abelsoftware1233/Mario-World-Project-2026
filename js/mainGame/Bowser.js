@@ -1,4 +1,4 @@
-function Enemy() {
+function Bowser() {
   var gameUI = GameUI.getInstance();
 
   var tickCounter = 0; //for animating enemy
