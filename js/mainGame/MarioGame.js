@@ -22,6 +22,7 @@ function MarioGame() {
 
   var keys = [];
   var goombas;
+  var Bowser;
   var powerUps;
   var bullets;
   var bulletFlag = false;
@@ -43,6 +44,7 @@ function MarioGame() {
     tileSize = 32;
     translatedDist = 0;
     goombas = [];
+    bowser = [];
     powerUps = [];
     bullets = [];
 
