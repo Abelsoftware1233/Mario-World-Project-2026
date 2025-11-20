@@ -22,7 +22,7 @@ function MarioGame() {
 
   var keys = [];
   var goombas;
-  var Bowser;
+  var bowser;
   var powerUps;
   var bullets;
   var bulletFlag = false;
