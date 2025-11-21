@@ -1,4 +1,4 @@
-Function Enemy() {
+function Enemy() {
   var gameUI = GameUI.getInstance();
 
   var tickCounter = 0; //for animating enemy
@@ -72,4 +72,4 @@ Function Enemy() {
       }
     }
   };
-} // <-- Afsluitende accolade
+}
