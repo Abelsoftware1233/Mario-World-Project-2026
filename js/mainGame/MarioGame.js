@@ -22,7 +22,7 @@ function MarioGame() {
 
   var keys = [];
   var goombas;
-  var bowser; // Array is gedeclareerd
+  var bowser; 
   var powerUps;
   var bullets;
   var bulletFlag = false;
@@ -44,7 +44,7 @@ function MarioGame() {
     tileSize = 32;
     translatedDist = 0;
     goombas = [];
-    bowser = []; // Array wordt gereset
+    bowser = []; 
     powerUps = [];
     bullets = [];
 
@@ -202,7 +202,7 @@ function MarioGame() {
       goombas[i].update();
     }
     
-    // 💥 CORRECTIE 2: Bowser toevoegen aan de update- en tekenlus
+    // Bowser toevoegen aan de update- en tekenlus
     for (var i = 0; i < bowser.length; i++) {
       if (bowser[i]) {
         bowser[i].draw();
@@ -235,7 +235,7 @@ function MarioGame() {
     for (var i = 0; i < goombas.length; i++) {
       goombas[i].grounded = false;
     }
-    // 💥 Reset grounded state voor Bowser
+    // Reset grounded state voor Bowser
     for (var i = 0; i < bowser.length; i++) {
       bowser[i].grounded = false;
     }
@@ -359,23 +359,23 @@ function MarioGame() {
             var enemy = new Enemy();
             enemy.x = column * tileSize;
             enemy.y = row * tileSize;
-            enemy.init(); // Gebruik de correcte init functie indien beschikbaar in Enemy.js
+            enemy.init(); 
             enemy.draw();
 
             goombas.push(enemy);
             map[row][column] = 0;
             break;
             
-          // 💥 CORRECTIE 1: Voeg Bowser toe aan de map rendering
-          case 21: //bowser (Type 21 zoals gedefinieerd in Bowser.js)
+          // Voeg Bowser toe aan de map rendering
+          case 21: //bowser (Type 21)
             var boss = new Bowser();
             boss.x = column * tileSize;
             boss.y = row * tileSize;
-            boss.init(); // Roep de init functie aan
+            boss.init(); 
             boss.draw();
 
             bowser.push(boss);
-            map[row][column] = 0; // Verwijder de tegel
+            map[row][column] = 0; 
             break;
         }
       }
@@ -506,7 +506,7 @@ function MarioGame() {
   };
 
   this.checkElementEnemyCollision = function(element) {
-    // 💥 CORRECTIE 3.1: Controleer op botsingen met Bowser
+    // Controleer op botsingen met Bowser
     for (var i = 0; i < bowser.length; i++) {
       if (bowser[i].state != 'deadFromBullet') {
         var collisionDirection = that.collisionCheck(bowser[i], element);
@@ -519,7 +519,7 @@ function MarioGame() {
       }
     }
     
-    // Bestaande logica voor Goombas
+    // Logica voor Goombas
     for (var i = 0; i < goombas.length; i++) {
       if (goombas[i].state != 'deadFromBullet') {
         //so that goombas fall from the map when dead from bullet
@@ -570,15 +570,13 @@ function MarioGame() {
   };
 
   this.checkEnemyMarioCollision = function() {
-    // 💥 CORRECTIE 3.2: Controleer op botsingen met Bowser (logica gekopieerd van Goomba, pas dit aan voor unieke Bowser-gevechten!)
+    // Controleer op botsingen met Bowser (Houd rekening met de waarschuwing dat de logica moet worden aangepast voor een echte baas!)
     for (var i = 0; i < bowser.length; i++) {
-      // ⚠️ LET OP: Bowser mag niet sterven door simpelweg op hem te springen! 
-      // Je moet hier unieke logica voor Bowser implementeren (bijv. meer hits nodig).
       if (!mario.invulnerable && bowser[i].state != 'dead' && bowser[i].state != 'deadFromBullet') {
         var collWithMario = that.collisionCheck(bowser[i], mario);
 
         if (collWithMario == 't') {
-          // Tijdelijke Goomba-doodslogica, moet worden vervangen door unieke Bowser-logica
+          // Tijdelijke Bowser-doodslogica
           bowser[i].state = 'dead'; 
 
           mario.velY = -mario.speed;
@@ -588,24 +586,14 @@ function MarioGame() {
 
           gameSound.play('killEnemy');
         } else if (collWithMario == 'r' || collWithMario == 'l' || collWithMario == 'b') {
-          // De rest van de Goomba-logica (Mario raakt gewond/sterft) is hetzelfde
-          bowser[i].velX *= -1; // Zodat Bowser omdraait bij contact
+          // Gevolgen voor Mario
+          bowser[i].velX *= -1; 
 
-          if (mario.type == 'big') {
-            // ... (Mario wordt kleiner)
-          } else if (mario.type == 'fire') {
-            // ... (Mario wordt big)
-          } else if (mario.type == 'small') {
-            // ... (Mario sterft)
-          }
-          // De complete Goomba-logica wordt hier gekopieerd om het te laten werken
-          // (Zou beter zijn als dit in een aparte functie werd geplaatst)
            if (mario.type == 'big') {
             mario.type = 'small';
             mario.invulnerable = true;
             collWithMario = undefined;
 
-            //sound when mario powerDowns
             gameSound.play('powerDown');
 
             setTimeout(function() {
@@ -617,7 +605,6 @@ function MarioGame() {
 
             collWithMario = undefined;
 
-            //sound when mario powerDowns
             gameSound.play('powerDown');
 
             setTimeout(function() {
@@ -633,7 +620,6 @@ function MarioGame() {
             score.lifeCount--;
             score.updateLifeCount();
 
-            //sound when mario dies
             gameSound.play('marioDie');
 
             timeOutId = setTimeout(function() {
@@ -643,11 +629,43 @@ function MarioGame() {
                 that.resetGame();
               }
             }, 3000);
-            return; // Stop de lus na Mario's dood
+            return; 
           }
         }
       }
     }
 
 
-    // Bestaande logica voor 
+    // Logica voor Goombas (compleet)
+    for (var i = 0; i < goombas.length; i++) {
+      if (!mario.invulnerable && goombas[i].state != 'dead' && goombas[i].state != 'deadFromBullet') {
+        var collWithMario = that.collisionCheck(goombas[i], mario);
+
+        if (collWithMario == 't') {
+          // Mario springt op Goomba
+          goombas[i].state = 'dead';
+          mario.velY = -mario.speed;
+
+          score.totalScore += 100;
+          score.updateTotalScore();
+
+          gameSound.play('killEnemy');
+        } else if (collWithMario == 'r' || collWithMario == 'l' || collWithMario == 'b') {
+          // Mario botst met Goomba
+          goombas[i].velX *= -1; // Goomba draait om bij botsing
+
+          if (mario.type == 'big') {
+            mario.type = 'small';
+            mario.invulnerable = true;
+            collWithMario = undefined;
+
+            gameSound.play('powerDown');
+
+            setTimeout(function() {
+              mario.invulnerable = false;
+            }, 1000);
+          } else if (mario.type == 'fire') {
+            mario.type = 'big';
+            mario.invulnerable = true;
+
+            collWithMario = 
