@@ -24,8 +24,7 @@ Function Enemy() {
 
   var that = this;
 
-  // 💥 CORRECTIE 1: Hernoemd naar 'init' voor consistentie
-  this.init = function() { 
+  this.init = function() {
     this.type = 20; // Type voor Goomba
     that.sX = 0;
   };
@@ -73,4 +72,4 @@ Function Enemy() {
       }
     }
   };
-}
+} // <-- Afsluitende accolade
