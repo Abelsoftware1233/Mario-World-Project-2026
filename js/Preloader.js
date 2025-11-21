@@ -1,4 +1,5 @@
-Function Preloader() {
+
+function Preloader() {
   var view = View.getInstance();
 
   var loadingPercentage;
@@ -82,7 +83,7 @@ Function Preloader() {
     var marioMakerInstance = MarioMaker.getInstance();
     marioMakerInstance.init();
   };
-} // <-- Afsluitende accolade
+}
 
 window.onload = function() {
   var preloader = new Preloader();
