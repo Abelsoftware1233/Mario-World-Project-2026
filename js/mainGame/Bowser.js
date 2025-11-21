@@ -1,4 +1,4 @@
-Function Bowser() {
+function Bowser() {
   var gameUI = GameUI.getInstance();
 
   var tickCounter = 0; // for animating enemy
@@ -18,7 +18,6 @@ Function Bowser() {
   this.sX;
   this.sY = 0;
   
-  // Afmetingen aangepast naar de waarden van de CSS (40x34)
   this.width = 40; 
   this.height = 34;
 
@@ -33,7 +32,6 @@ Function Bowser() {
 
   this.draw = function() {
     that.sX = that.width * that.frame;
-    // Gebruikt de gecorrigeerde afmetingen van 40x34 voor tekenen
     gameUI.draw(element, that.sX, that.sY, that.width, that.height, that.x, that.y, that.width, that.height);
   };
 
@@ -56,12 +54,10 @@ Function Bowser() {
       that.velY += gravity;
       that.y += that.velY;
     } else {
-      // Normale loop- en zwaartekrachtlogica
       that.velY += gravity;
       that.x += that.velX;
       that.y += that.velY;
 
-      // for animating (tussen frame 0 en 1)
       tickCounter += 1;
 
       if (tickCounter > maxTick) {
@@ -74,4 +70,4 @@ Function Bowser() {
       }
     }
   };
-} // <-- Afsluitende accolade
+}
