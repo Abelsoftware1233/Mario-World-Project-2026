@@ -18,8 +18,8 @@ function Bowser() {
   this.sX;
   this.sY = 0;
   
-  this.width = 32; 
-  this.height = 32;
+  this.width = 240; 
+  this.height = 120;
 
   this.frame = 0;
 
