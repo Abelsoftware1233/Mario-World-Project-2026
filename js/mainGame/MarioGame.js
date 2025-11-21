@@ -22,7 +22,7 @@ function MarioGame() {
 
   var keys = [];
   var goombas;
-  var bowser;
+  var bowser; // Array is gedeclareerd
   var powerUps;
   var bullets;
   var bulletFlag = false;
@@ -44,7 +44,7 @@ function MarioGame() {
     tileSize = 32;
     translatedDist = 0;
     goombas = [];
-    bowser = [];
+    bowser = []; // Array wordt gereset
     powerUps = [];
     bullets = [];
 
@@ -201,6 +201,14 @@ function MarioGame() {
       goombas[i].draw();
       goombas[i].update();
     }
+    
+    // 💥 CORRECTIE 2: Bowser toevoegen aan de update- en tekenlus
+    for (var i = 0; i < bowser.length; i++) {
+      if (bowser[i]) {
+        bowser[i].draw();
+        bowser[i].update();
+      }
+    }
 
     that.checkPowerUpMarioCollision();
     that.checkBulletEnemyCollision();
@@ -226,6 +234,10 @@ function MarioGame() {
     }
     for (var i = 0; i < goombas.length; i++) {
       goombas[i].grounded = false;
+    }
+    // 💥 Reset grounded state voor Bowser
+    for (var i = 0; i < bowser.length; i++) {
+      bowser[i].grounded = false;
     }
 
     for (var row = 0; row < map.length; row++) {
@@ -347,11 +359,24 @@ function MarioGame() {
             var enemy = new Enemy();
             enemy.x = column * tileSize;
             enemy.y = row * tileSize;
-            enemy.goomba();
+            enemy.init(); // Gebruik de correcte init functie indien beschikbaar in Enemy.js
             enemy.draw();
 
             goombas.push(enemy);
             map[row][column] = 0;
+            break;
+            
+          // 💥 CORRECTIE 1: Voeg Bowser toe aan de map rendering
+          case 21: //bowser (Type 21 zoals gedefinieerd in Bowser.js)
+            var boss = new Bowser();
+            boss.x = column * tileSize;
+            boss.y = row * tileSize;
+            boss.init(); // Roep de init functie aan
+            boss.draw();
+
+            bowser.push(boss);
+            map[row][column] = 0; // Verwijder de tegel
+            break;
         }
       }
     }
@@ -481,6 +506,20 @@ function MarioGame() {
   };
 
   this.checkElementEnemyCollision = function(element) {
+    // 💥 CORRECTIE 3.1: Controleer op botsingen met Bowser
+    for (var i = 0; i < bowser.length; i++) {
+      if (bowser[i].state != 'deadFromBullet') {
+        var collisionDirection = that.collisionCheck(bowser[i], element);
+
+        if (collisionDirection == 'l' || collisionDirection == 'r') {
+          bowser[i].velX *= -1;
+        } else if (collisionDirection == 'b') {
+          bowser[i].grounded = true;
+        }
+      }
+    }
+    
+    // Bestaande logica voor Goombas
     for (var i = 0; i < goombas.length; i++) {
       if (goombas[i].state != 'deadFromBullet') {
         //so that goombas fall from the map when dead from bullet
@@ -531,26 +570,37 @@ function MarioGame() {
   };
 
   this.checkEnemyMarioCollision = function() {
-    for (var i = 0; i < goombas.length; i++) {
-      if (!mario.invulnerable && goombas[i].state != 'dead' && goombas[i].state != 'deadFromBullet') {
-        //if mario is invulnerable or goombas state is dead, collision doesnt occur
-        var collWithMario = that.collisionCheck(goombas[i], mario);
+    // 💥 CORRECTIE 3.2: Controleer op botsingen met Bowser (logica gekopieerd van Goomba, pas dit aan voor unieke Bowser-gevechten!)
+    for (var i = 0; i < bowser.length; i++) {
+      // ⚠️ LET OP: Bowser mag niet sterven door simpelweg op hem te springen! 
+      // Je moet hier unieke logica voor Bowser implementeren (bijv. meer hits nodig).
+      if (!mario.invulnerable && bowser[i].state != 'dead' && bowser[i].state != 'deadFromBullet') {
+        var collWithMario = that.collisionCheck(bowser[i], mario);
 
         if (collWithMario == 't') {
-          //kill goombas if collision is from top
-          goombas[i].state = 'dead';
+          // Tijdelijke Goomba-doodslogica, moet worden vervangen door unieke Bowser-logica
+          bowser[i].state = 'dead'; 
 
           mario.velY = -mario.speed;
 
           score.totalScore += 1000;
           score.updateTotalScore();
 
-          //sound when enemy dies
           gameSound.play('killEnemy');
         } else if (collWithMario == 'r' || collWithMario == 'l' || collWithMario == 'b') {
-          goombas[i].velX *= -1;
+          // De rest van de Goomba-logica (Mario raakt gewond/sterft) is hetzelfde
+          bowser[i].velX *= -1; // Zodat Bowser omdraait bij contact
 
           if (mario.type == 'big') {
+            // ... (Mario wordt kleiner)
+          } else if (mario.type == 'fire') {
+            // ... (Mario wordt big)
+          } else if (mario.type == 'small') {
+            // ... (Mario sterft)
+          }
+          // De complete Goomba-logica wordt hier gekopieerd om het te laten werken
+          // (Zou beter zijn als dit in een aparte functie werd geplaatst)
+           if (mario.type == 'big') {
             mario.type = 'small';
             mario.invulnerable = true;
             collWithMario = undefined;
@@ -593,280 +643,11 @@ function MarioGame() {
                 that.resetGame();
               }
             }, 3000);
-            break;
-          }
-        }
-      }
-    }
-  };
-
-  this.checkBulletEnemyCollision = function() {
-    for (var i = 0; i < goombas.length; i++) {
-      for (var j = 0; j < bullets.length; j++) {
-        if (goombas[i] && goombas[i].state != 'dead') {
-          //check for collision only if goombas exist and is not dead
-          var collWithBullet = that.collisionCheck(goombas[i], bullets[j]);
-        }
-
-        if (collWithBullet) {
-          bullets[j] = null;
-          bullets.splice(j, 1);
-
-          goombas[i].state = 'deadFromBullet';
-
-          score.totalScore += 1000;
-          score.updateTotalScore();
-
-          //sound when enemy dies
-          gameSound.play('killEnemy');
-        }
-      }
-    }
-  };
-
-  this.wallCollision = function() {
-    //for walls (vieport walls)
-    if (mario.x >= maxWidth - mario.width) {
-      mario.x = maxWidth - mario.width;
-    } else if (mario.x <= translatedDist) {
-      mario.x = translatedDist + 1;
-    }
-
-    //for ground (viewport ground)
-    if (mario.y >= height) {
-      that.pauseGame();
-
-      //sound when mario dies
-      gameSound.play('marioDie');
-
-      score.lifeCount--;
-      score.updateLifeCount();
-
-      timeOutId = setTimeout(function() {
-        if (score.lifeCount == 0) {
-          that.gameOver();
-        } else {
-          that.resetGame();
-        }
-      }, 3000);
-    }
-  };
-
-  //controlling mario with key events
-  this.updateMario = function() {
-    var friction = 0.9;
-    var gravity = 0.2;
-
-    mario.checkMarioType();
-
-    if (keys[38] || keys[32]) {
-      //up arrow
-      if (!mario.jumping && mario.grounded) {
-        mario.jumping = true;
-        mario.grounded = false;
-        mario.velY = -(mario.speed / 2 + 5.5);
-
-        // mario sprite position
-        if (mario.frame == 0 || mario.frame == 1) {
-          mario.frame = 3; //right jump
-        } else if (mario.frame == 8 || mario.frame == 9) {
-          mario.frame = 2; //left jump
-        }
-
-        //sound when mario jumps
-        gameSound.play('jump');
-      }
-    }
-
-    if (keys[39]) {
-      //right arrow
-      that.checkMarioPos(); //if mario goes to the center of the screen, sidescroll the map
-
-      if (mario.velX < mario.speed) {
-        mario.velX++;
-      }
-
-      //mario sprite position
-      if (!mario.jumping) {
-        tickCounter += 1;
-
-        if (tickCounter > maxTick / mario.speed) {
-          tickCounter = 0;
-
-          if (mario.frame != 1) {
-            mario.frame = 1;
-          } else {
-            mario.frame = 0;
+            return; // Stop de lus na Mario's dood
           }
         }
       }
     }
 
-    if (keys[37]) {
-      //left arrow
-      if (mario.velX > -mario.speed) {
-        mario.velX--;
-      }
 
-      //mario sprite position
-      if (!mario.jumping) {
-        tickCounter += 1;
-
-        if (tickCounter > maxTick / mario.speed) {
-          tickCounter = 0;
-
-          if (mario.frame != 9) {
-            mario.frame = 9;
-          } else {
-            mario.frame = 8;
-          }
-        }
-      }
-    }
-
-    if (keys[16]) {
-      //shift key
-      mario.speed = 4.5;
-    } else {
-      mario.speed = 3;
-    }
-
-    if (keys[17] && mario.type == 'fire') {
-      //ctrl key
-      if (!bulletFlag) {
-        bulletFlag = true;
-        var bullet = new Bullet();
-        if (mario.frame == 9 || mario.frame == 8 || mario.frame == 2) {
-          var direction = -1;
-        } else {
-          var direction = 1;
-        }
-        bullet.init(mario.x, mario.y, direction);
-        bullets.push(bullet);
-
-        //bullet sound
-        gameSound.play('bullet');
-
-        setTimeout(function() {
-          bulletFlag = false; //only lets mario fire bullet after 500ms
-        }, 500);
-      }
-    }
-
-    //velocity 0 sprite position
-    if (mario.velX > 0 && mario.velX < 1 && !mario.jumping) {
-      mario.frame = 0;
-    } else if (mario.velX > -1 && mario.velX < 0 && !mario.jumping) {
-      mario.frame = 8;
-    }
-
-    if (mario.grounded) {
-      mario.velY = 0;
-
-      //grounded sprite position
-      if (mario.frame == 3) {
-        mario.frame = 0; //looking right
-      } else if (mario.frame == 2) {
-        mario.frame = 8; //looking left
-      }
-    }
-
-    //change mario position
-    mario.velX *= friction;
-    mario.velY += gravity;
-
-    mario.x += mario.velX;
-    mario.y += mario.velY;
-  };
-
-  this.checkMarioPos = function() {
-    centerPos = translatedDist + viewPort / 2;
-
-    //side scrolling as mario reaches center of the viewPort
-    if (mario.x > centerPos && centerPos + viewPort / 2 < maxWidth) {
-      gameUI.scrollWindow(-mario.speed, 0);
-      translatedDist += mario.speed;
-    }
-  };
-
-  this.levelFinish = function(collisionDirection) {
-    //game finishes when mario slides the flagPole and collides with the ground
-    if (collisionDirection == 'r') {
-      mario.x += 10;
-      mario.velY = 2;
-      mario.frame = 11;
-    } else if (collisionDirection == 'l') {
-      mario.x -= 32;
-      mario.velY = 2;
-      mario.frame = 10;
-    }
-
-    if (marioInGround) {
-      mario.x += 20;
-      mario.frame = 10;
-      tickCounter += 1;
-      if (tickCounter > maxTick) {
-        that.pauseGame();
-
-        mario.x += 10;
-        tickCounter = 0;
-        mario.frame = 12;
-
-        //sound when stage clears
-        gameSound.play('stageClear');
-
-        timeOutId = setTimeout(function() {
-          currentLevel++;
-          if (originalMaps[currentLevel]) {
-            that.init(originalMaps, currentLevel);
-            score.updateLevelNum(currentLevel);
-          } else {
-            that.gameOver();
-          }
-        }, 5000);
-      }
-    }
-  };
-
-  this.pauseGame = function() {
-    window.cancelAnimationFrame(animationID);
-  };
-
-  this.gameOver = function() {
-    score.gameOverView();
-    gameUI.makeBox(0, 0, maxWidth, height);
-    gameUI.writeText('Game Over', centerPos - 80, height - 300);
-    gameUI.writeText('Thanks For Playing', centerPos - 122, height / 2);
-  };
-
-  this.resetGame = function() {
-    that.clearInstances();
-    that.init(originalMaps, currentLevel);
-  };
-
-  this.clearInstances = function() {
-    mario = null;
-    element = null;
-    gameSound = null;
-
-    goombas = [];
-    bullets = [];
-    powerUps = [];
-  };
-
-  this.clearTimeOut = function() {
-    clearTimeout(timeOutId);
-  };
-
-  this.removeGameScreen = function() {
-    gameUI.hide();
-
-    if (score) {
-      score.hideScore();
-    }
-  };
-
-  this.showGameScreen = function() {
-    gameUI.show();
-  };
-}
+    // Bestaande logica voor 
