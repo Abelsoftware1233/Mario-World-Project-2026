@@ -1,4 +1,4 @@
-function Enemy() {
+Function Enemy() {
   var gameUI = GameUI.getInstance();
 
   var tickCounter = 0; //for animating enemy
@@ -24,8 +24,9 @@ function Enemy() {
 
   var that = this;
 
-  this.goomba = function() {
-    this.type = 20;
+  // 💥 CORRECTIE 1: Hernoemd naar 'init' voor consistentie
+  this.init = function() { 
+    this.type = 20; // Type voor Goomba
     that.sX = 0;
   };
 
