@@ -127,7 +127,7 @@ function Editor() {
       'pipe-top-left',
       'pipe-top-right',
       'goomba',
-      'bowser',
+      'bowser', // 'bowser' is hier correct gedefinieerd
     ];
     var element;
 
@@ -233,6 +233,11 @@ function Editor() {
           case 'goomba':
             value = 20;
             break;
+            
+          // 💥 CRUCIALE CORRECTIE: Voeg de Bowser-case toe om waarde 21 op te slaan
+          case 'bowser':
+            value = 21; 
+            break;
 
           case 'flag-pole':
             value = 5;
@@ -310,7 +315,8 @@ function Editor() {
       var gridColumns = gridRows[i].getElementsByTagName('td');
 
       for (var j = 0; j < gridColumns.length; j++) {
-        view.addClass(gridColumns[j], 'cell');
+        // 💥 CORRECTIE: Stel className in op 'cell' om alle andere elementklassen te verwijderen
+        gridColumns[j].className = 'cell';
       }
     }
 
