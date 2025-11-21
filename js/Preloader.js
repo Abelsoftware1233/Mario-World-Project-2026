@@ -4,7 +4,7 @@ Function Preloader() {
   var loadingPercentage;
 
   var imageSources;
-  var soundSources; // Let op: deze variabele wordt gedeclareerd maar niet gebruikt in de laadlogica.
+  var soundSources; 
 
   var that = this;
 
@@ -16,10 +16,8 @@ Function Preloader() {
     view.appendToBody(loadingPercentage);
 
     imageSources = {
-     
       1: 'images/back-btn.png',
       2: 'images/bg.png',
-      // 💥 CRUCIALE CORRECTIE: De missende .png extensie is toegevoegd!
       3: 'images/bowser.png', 
       4: 'images/bullet.png',
       5: 'images/clear-map-btn.png',
@@ -44,7 +42,6 @@ Function Preloader() {
       24: 'images/slider-left.png',
       25: 'images/slider-right.png',
       26: 'images/start-btn.png',
-      
    };
 
     that.loadImages(imageSources);
@@ -65,7 +62,6 @@ Function Preloader() {
 
       images[key].onload = function() {
         loadedImages++;
-        // De percentage zal nu 100% bereiken als alle 26 afbeeldingen correct laden
         percentage = Math.floor(loadedImages * 100 / totalImages); 
 
         view.setHTML(loadingPercentage, percentage + '%'); //displaying percentage
@@ -76,14 +72,8 @@ Function Preloader() {
         }
       };
       
-      // Optioneel: voeg een foutafhandeling toe voor als een afbeelding niet gevonden wordt
       images[key].onerror = function() {
           console.error('Fout bij het laden van afbeelding:', this.src);
-          // OPMERKING: Bij een fout wordt 'loadedImages' niet verhoogd.
-          // Dit zou betekenen dat het spel niet opstart. 
-          // Als je wilt dat het spel doorgaat ondanks een fout, moet je 
-          // loadedImages++ hier ook toevoegen, maar het is beter om alle 
-          // assets te laten laden.
       }
     }
   };
@@ -92,7 +82,7 @@ Function Preloader() {
     var marioMakerInstance = MarioMaker.getInstance();
     marioMakerInstance.init();
   };
-}
+} // <-- Afsluitende accolade
 
 window.onload = function() {
   var preloader = new Preloader();
