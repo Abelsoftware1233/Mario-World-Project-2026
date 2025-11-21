@@ -1,10 +1,10 @@
-function Preloader() {
+Function Preloader() {
   var view = View.getInstance();
 
   var loadingPercentage;
 
   var imageSources;
-  var soundSources;
+  var soundSources; // Let op: deze variabele wordt gedeclareerd maar niet gebruikt in de laadlogica.
 
   var that = this;
 
@@ -19,7 +19,8 @@ function Preloader() {
      
       1: 'images/back-btn.png',
       2: 'images/bg.png',
-      3: 'images/bowser',
+      // 💥 CRUCIALE CORRECTIE: De missende .png extensie is toegevoegd!
+      3: 'images/bowser.png', 
       4: 'images/bullet.png',
       5: 'images/clear-map-btn.png',
       6: 'images/coin.png',
@@ -64,7 +65,8 @@ function Preloader() {
 
       images[key].onload = function() {
         loadedImages++;
-        percentage = Math.floor(loadedImages * 100 / totalImages);
+        // De percentage zal nu 100% bereiken als alle 26 afbeeldingen correct laden
+        percentage = Math.floor(loadedImages * 100 / totalImages); 
 
         view.setHTML(loadingPercentage, percentage + '%'); //displaying percentage
 
@@ -73,6 +75,16 @@ function Preloader() {
           that.initMainApp();
         }
       };
+      
+      // Optioneel: voeg een foutafhandeling toe voor als een afbeelding niet gevonden wordt
+      images[key].onerror = function() {
+          console.error('Fout bij het laden van afbeelding:', this.src);
+          // OPMERKING: Bij een fout wordt 'loadedImages' niet verhoogd.
+          // Dit zou betekenen dat het spel niet opstart. 
+          // Als je wilt dat het spel doorgaat ondanks een fout, moet je 
+          // loadedImages++ hier ook toevoegen, maar het is beter om alle 
+          // assets te laten laden.
+      }
     }
   };
 
