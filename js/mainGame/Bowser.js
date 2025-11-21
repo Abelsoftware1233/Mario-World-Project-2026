@@ -18,7 +18,7 @@ Function Bowser() {
   this.sX;
   this.sY = 0;
   
-  // 💥 CORRECTIE: De afmetingen zijn aangepast naar de waarden van de CSS (40x34)
+  // Afmetingen aangepast naar de waarden van de CSS (40x34)
   this.width = 40; 
   this.height = 34;
 
@@ -26,8 +26,6 @@ Function Bowser() {
 
   var that = this;
 
-  // 💥 CORRECTIE: De 'goomba'-functie is hernoemd naar 'init' en krijgt 
-  // een uniek 'type' (21) toegewezen voor Bowser.
   this.init = function() { 
     this.type = 21; // Uniek type voor Bowser
     that.sX = 0;
@@ -47,18 +45,14 @@ Function Bowser() {
     }
 
     if (that.state == 'dead') {
-      // ⚠️ LET OP: Dit is nog steeds Goomba's doodslogica.
-      // Als Bowser een specifieke doodsanimatie heeft (bijv. vlammen of exploderen),
-      // moet de logica hier worden aangepast (bijv. andere frame-indices).
-      that.frame = 2; // (Dit kan een 'squashed' frame zijn als je het zo wilt)
+      that.frame = 2; 
 
       tickCounter++;
       if (tickCounter >= 60) {
         that.frame = 4;
       }
     } else if (that.state == 'deadFromBullet') {
-      // ⚠️ LET OP: Dit is nog steeds Goomba's vallende logica.
-      that.frame = 3; // (Dit kan een 'vallend' frame zijn)
+      that.frame = 3; 
       that.velY += gravity;
       that.y += that.velY;
     } else {
@@ -80,4 +74,4 @@ Function Bowser() {
       }
     }
   };
-}
+} // <-- Afsluitende accolade
