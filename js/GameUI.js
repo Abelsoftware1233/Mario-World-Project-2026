@@ -45,6 +45,7 @@ var GameUI = (function() {
       ctx.translate(x, y);
     };
 
+    // De functie draw is hier volledig correct voor jouw gebruik (9 argumenten)
     this.draw = function(image, sx, sy, width, height, x, y, width, height) {
       ctx.drawImage(image, sx, sy, width, height, x, y, width, height);
     };
